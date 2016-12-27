@@ -4,6 +4,8 @@ import isosurface from "isosurface";
 import Algebrite from "/imports/algebrite";
 import katex from "katex";
 import $ from "jquery";
+import _ from "lodash";
+import "/node_modules/bootstrap/dist/css/bootstrap.css"
 import './main.html';
 
 //window.Algebrite = Algebrite;
@@ -17,12 +19,14 @@ Template.simulation.onRendered(() => {
   let controls = new THREE.OrbitControls( camera, renderer.domElement );
   let light = new THREE.HemisphereLight( 0xffffff, 0x444444, 1 );
 
+  console.log(THREE.GPUParticleSystem);
+
   scene.background = new THREE.Color(0x333333);
   renderer.setSize( $(".simulation").width(), $(".simulation").height() );
   $(".simulation").html( renderer.domElement );
-  camera.position.z = 10;
-  camera.position.x = 10;
-  camera.position.y = 10;
+  camera.position.z = 5;
+  camera.position.x = 5;
+  camera.position.y = 5;
   camera.lookAt(new THREE.Vector3(0,0,0));
   controls.enableZoom = true;
   scene.add(light);
@@ -42,6 +46,8 @@ Template.simulation.onRendered(() => {
 
     constructor(){
       this.exp = /([^a-zA-Z]|^)(x)([^a-zA-Z]|$)/g;
+      this.spriteMap = new THREE.TextureLoader().load( "circle.png" );
+      this.bounds = 8;
     }
 
     getLegendrePolynomial(l){
@@ -125,9 +131,7 @@ Template.simulation.onRendered(() => {
       eq = replaceSingle(eq, "Y_lm", this.getSphericalHarmonics(l, m));
 
       let res = Algebrite.simplify(eq);
-      let conj = Algebrite.simplify(Algebrite.multiply(Algebrite.conj(eq), res));
-      //let foo = Algebrite.simplify("("+res.toString()+")*("+conj+")");
-      console.log(Algebrite.eval(conj).cons);
+      let conj = Algebrite.simplify(Algebrite.real("("+eq+")^2"));
 
       katex.render("\\psi_{"+n+l+m+"} = " + res.toLatexString(), $("#wave")[0], {displayMode: true});
       katex.render("|\\psi_{"+n+l+m+"}|^2 = " + conj.toLatexString(), $("#wavesquared")[0], {displayMode: true});
@@ -139,22 +143,14 @@ Template.simulation.onRendered(() => {
 
     addAtom(eq){
       let res = 10;
-      let bound = 10;
+      let bound = 40;
 
-      let mesh = isosurface.surfaceNets([res,res,res], function(x,y,z) {
+      let mesh = isosurface.marchingCubes([res,res,res], function(x,y,z) {
         let r = Math.sqrt(x*x + y*y + z*z);
         let t = Math.acos(z/r);
         let p = Math.atan(y/x);
 
-        // let rofl = replaceSingle(eq, "r", r);
-        // rofl = replaceSingle(rofl, "t", theta);
-        // rofl = replaceSingle(rofl, "p", phi);
-        // console.log(eq);
-        //let number = Algebrite.float(rofl).d;
-        //console.log(r);
-        //console.log(number);
-        //return Algebrite.eval(eq, "r", r, "t", t, "p", p).d - 1e-8;
-        return Math.pow(r*Math.exp(-r)*Math.cos(t), 2) - 0.00001
+        return Algebrite.eval(eq, "r", r, "t", t, "p", p).d - 1e-6;
       }, [[-bound,-bound,-bound], [bound,bound,bound]])
 
       let geometry = new THREE.Geometry();
@@ -180,20 +176,79 @@ Template.simulation.onRendered(() => {
       let obj = new THREE.Mesh(geometry, material);
       scene.add(obj);
     }
+
+    generateRandomPoint(bounds){
+      let x = Math.random()*bounds*2-bounds;
+      let y = Math.random()*bounds*2-bounds;
+      let z = Math.random()*bounds*2-bounds;
+      // If point is outside of sphere, find a new one
+      if(Math.sqrt(x*x+y*y+z*z) < bounds) return {x: x, y: y, z: z};
+      else return this.generateRandomPoint(bounds);
+    }
+
+    addCloud(eq){
+      let values = [];
+      let points = [];
+      let bounds = this.bounds;
+      _.times(1000, (n) => {
+        let p = this.generateRandomPoint(bounds);
+        let val = this.getFunctionValue(eq, p.x, p.y, p.z);
+        points.push(p);
+        values.push(val);
+        //this.addSprite(p.x, p.y, p.z, val*2000);
+      });
+
+      // Normalise the opacities
+      let max = 0;
+      for(let i in values){
+        let val = values[i];
+        if(val > max) max = val;
+      }
+      for(let i in values){
+        let val = values[i]/max;
+        let p = points[i];
+        this.addSprite(p.x, p.y, p.z, val);
+      }
+
+      // this.addSprite(bounds, 0, 0);
+      // this.addSprite(-bounds, 0, 0);
+      // this.addSprite(0, bounds, 0);
+      // this.addSprite(0, -bounds, 0);
+      // this.addSprite(0, 0, bounds);
+      // this.addSprite(0, 0, -bounds);
+    }
+
+    addSprite(x, y, z, opacity = 1, color = 0xffffff){
+      var spriteMaterial = new THREE.SpriteMaterial({
+        map: this.spriteMap,
+        color: 0xffffff,
+        opacity: opacity,
+        alphaTest: 0.01
+      });
+      let sprite = new THREE.Sprite(spriteMaterial);
+
+      let scale = 0.5;
+      sprite.scale.set(scale, scale, scale);
+
+      sprite.position.x = x;
+      sprite.position.y = y;
+      sprite.position.z = z;
+
+      scene.add(sprite);
+    }
+
+    getFunctionValue(eq, x, y, z){
+      let r = Math.sqrt(x*x + y*y + z*z);
+      let t = Math.acos(z/r);
+      let p = Math.atan(y/x);
+
+      return Algebrite.eval(eq, "r", r, "t", t, "p", p).d;
+    }
   }
 
   let simulation = new Simulation();
 
-  // simulation.getSphericalHarmonics(1, 1);
-  //simulation.getLegendreFunction(1, 1);
-  //simulation.getLaguerre(2, 2);
-  //let dada = simulation.getWaveFunction(1, 0, 2)
-  let eq = simulation.getWaveFunction(2, 0, 3);
-  console.log(Algebrite.eval(eq, "r", "(1, 2)"));
-  // console.log(eq);
-  // eq = replaceSingle(eq, "r", 50);
-  // console.log(eq);
-  // console.log(Algebrite.float(eq).d);
-  simulation.addAtom(dada);
-  //simulation.getRadialWave(0, 2);
+  let eq = simulation.getWaveFunction(0, 0, 1);
+  simulation.addCloud(eq);
+  //simulation.addAtom(eq);
 });

@@ -7,9 +7,11 @@
   "dependencies": {
     "algebrite": "^0.2.23",
     "babel-runtime": "6.18.0",
+    "bootstrap": "^3.3.7",
     "isosurface": "^1.0.0",
     "jquery": "^3.1.1",
     "katex": "^0.6.0",
+    "lodash": "^4.17.3",
     "meteor-node-stubs": "~0.2.0",
     "three-js": "^79.0.0"
   }

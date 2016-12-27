@@ -5,9 +5,61 @@
 
 <body>
   <div class="menu">
+
+    <h1>Hydrogenic wave function visualization</h1>
+
+    <h4>Options</h4>
+
+    <form class="form-horizontal">
+      <div class="form-group">
+        <label class="col-sm-6 control-label">Principal quantum number (n)</label>
+        <div class="col-sm-4">
+          <select class="form-control">
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-6 control-label">Azimuthal quantum number (ℓ)</label>
+        <div class="col-sm-4">
+          <select class="form-control">
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-6 control-label">Magnetic quantum number (m)</label>
+        <div class="col-sm-4">
+          <select class="form-control">
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-offset-6 col-sm-10">
+          <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+      </div>
+    </form>
+
+    <h4>Calculated functions</h4>
+
     <div id="radial"></div>
     <div id="harmonic"></div>
     <div id="wave"></div>
+    <div id="waveconj"></div>
     <div id="wavesquared"></div>
   </div>
 
