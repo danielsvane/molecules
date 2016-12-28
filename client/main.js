@@ -3,6 +3,7 @@ import $ from "jquery";
 import _ from "lodash";
 import "/node_modules/bootstrap/dist/css/bootstrap.css"
 import './main.html';
+import "/imports/client/analytics";
 
 let simulation = new Simulation();
 let ns = [1, 2, 3, 4];
