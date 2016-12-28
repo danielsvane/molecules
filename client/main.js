@@ -10,6 +10,12 @@ let ns = [1, 2, 3, 4];
 let ls = [0];
 let ms = [0];
 
+$(window).on("resize", () => {
+  simulation.camera.aspect = $(".simulation").width() / $(".simulation").height();
+  simulation.camera.updateProjectionMatrix();
+  simulation.renderer.setSize( $(".simulation").width(), $(".simulation").height() );
+});
+
 Template.menu.helpers({
   bounds: function(){
     return simulation.bounds;
@@ -51,6 +57,32 @@ Template.menu.events({
     simulation.bounds = bounds;
     simulation.particleCount = particleCount;
     simulation.addCloud(eq);
+  },
+  "click .increase-select": function(event){
+    let el = $(event.target).parent().prev();
+    el.find("option:selected").next().prop("selected",true);
+    el.trigger("change");
+  },
+  "click .decrease-select": function(event){
+    let el = $(event.target).parent().next();
+    el.find("option:selected").prev().prop("selected",true);
+    el.trigger("change");
+  },
+  "click .increase-input": function(event){
+    let el = $(event.target).parent().prev();
+    let incr = parseInt(el.data("increment"));
+    el.val((i, prev) => {
+      return parseInt(prev)+incr;
+    });
+  },
+  "click .decrease-input": function(event){
+    let el = $(event.target).parent().next();
+    let incr = parseInt(el.data("increment"));
+    el.val((i, prev) => {
+      let next = parseInt(prev)-incr;
+      if(next <= 0) return 0;
+      else return next;
+    });
   }
 })
 

@@ -39,50 +39,96 @@
 <template name="menu">
   <form class="form-horizontal">
     <div class="form-group">
-      <label class="col-sm-6 control-label">Principal quantum number (n)</label>
-      <div class="col-sm-4">
-        <select id="n" class="form-control">
-          <option>1</option>
-          <option>2</option>
-          <option>3</option>
-          <option>4</option>
-          <option>5</option>
-        </select>
+      <label class="col-md-6 control-label">Principal quantum number (n)</label>
+      <div class="col-md-5">
+        <div class="input-group">
+          <div class="input-group-btn">
+            <div class="btn btn-default decrease-select">-</div>
+          </div>
+          <select id="n" class="form-control">
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+          </select>
+          <div class="input-group-btn">
+            <div class="btn btn-default increase-select">+</div>
+          </div>
+        </div>
       </div>
     </div>
+
     <div class="form-group">
-      <label class="col-sm-6 control-label">Azimuthal quantum number (ℓ)</label>
-      <div class="col-sm-4">
-        <select id="l" class="form-control">
-          <option>0</option>
-        </select>
+      <label class="col-md-6 control-label">Azimuthal quantum number (ℓ)</label>
+      <div class="col-md-5">
+        <div class="input-group">
+          <div class="input-group-btn">
+            <div class="btn btn-default decrease-select">-</div>
+          </div>
+          <select id="l" class="form-control">
+            <option>0</option>
+          </select>
+          <div class="input-group-btn">
+            <div class="btn btn-default increase-select">+</div>
+          </div>
+        </div>
       </div>
     </div>
+
     <div class="form-group">
-      <label class="col-sm-6 control-label">Magnetic quantum number (m)</label>
-      <div class="col-sm-4">
-        <select id="m" class="form-control">
-          <option>0</option>
-        </select>
+      <label class="col-md-6 control-label">Magnetic quantum number (m)</label>
+      <div class="col-md-5">
+        <div class="input-group">
+          <div class="input-group-btn">
+            <div class="btn btn-default decrease-select">-</div>
+          </div>
+          <select id="m" class="form-control">
+            <option>0</option>
+          </select>
+          <div class="input-group-btn">
+            <div class="btn btn-default increase-select">+</div>
+          </div>
+        </div>
       </div>
     </div>
+
     <div class="form-group">
-      <label class="col-sm-6 control-label">Bounding radius</label>
-      <div class="col-sm-4">
-        <input class="form-control" id="bounds" value="{{bounds}}">
+      <label class="col-md-6 control-label">Bounding radius</label>
+      <div class="col-md-5">
+        <div class="input-group">
+          <div class="input-group-btn">
+            <div class="btn btn-default decrease-input">-</div>
+          </div>
+          <input data-increment=1 class="form-control" id="bounds" value="{{bounds}}">
+          <div class="input-group-btn">
+            <div class="btn btn-default increase-input">+</div>
+          </div>
+        </div>
       </div>
     </div>
+
     <div class="form-group">
-      <label class="col-sm-6 control-label">Particles</label>
-      <div class="col-sm-4">
-        <input class="form-control" id="particleCount" value="{{particleCount}}">
+      <label class="col-md-6 control-label">Particles</label>
+      <div class="col-md-5">
+        <div class="input-group">
+          <div class="input-group-btn">
+            <div class="btn btn-default decrease-input">-</div>
+          </div>
+          <input data-increment=1000 class="form-control" id="particleCount" value="{{particleCount}}">
+          <div class="input-group-btn">
+            <div class="btn btn-default increase-input">+</div>
+          </div>
+        </div>
       </div>
     </div>
+
     <div class="form-group">
-      <div class="col-sm-offset-6 col-sm-10">
+      <div class="col-md-offset-6 col-md-10">
         <button type="submit" id="update" class="btn btn-primary">Update</button>
       </div>
     </div>
+
   </form>
 </template>
 
