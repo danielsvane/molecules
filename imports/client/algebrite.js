@@ -962,24 +962,24 @@
 
   /*
    Symbolic addition
-  
+
   	Terms in a sum are combined if they are identical modulo rational
   	coefficients.
-  
+
   	For example, A + 2A becomes 3A.
-  
+
   	However, the sum A + sqrt(2) A is not modified.
-  
+
   	Combining terms can lead to second-order effects.
-  
+
   	For example, consider the case of
-  
+
   		1/sqrt(2) A + 3/sqrt(2) A + sqrt(2) A
-  
+
   	The first two terms are combined to yield 2 sqrt(2) A.
-  
+
   	This result can now be combined with the third term to yield
-  
+
   		3 sqrt(2) A
    */
 
@@ -1110,9 +1110,9 @@
 
   /*
    Compare adjacent terms in s[] and combine if possible.
-  
+
   	Returns the number of terms remaining in s[].
-  
+
   	n	number of terms in s[] initially
    */
 
@@ -1741,49 +1741,49 @@
 
   /*
    Argument (angle) of complex z
-  
+
   	z		arg(z)
   	-		------
-  
+
   	a		0
-  
+
   	-a		-pi			See note 3 below
-  
+
   	(-1)^a		a pi
-  
+
   	exp(a + i b)	b
-  
+
   	a b		arg(a) + arg(b)
-  
+
   	a + i b		arctan(b/a)
-  
+
   Result by quadrant
-  
+
   	z		arg(z)
   	-		------
-  
+
   	1 + i		1/4 pi
-  
+
   	1 - i		-1/4 pi
-  
+
   	-1 + i		3/4 pi
-  
+
   	-1 - i		-3/4 pi
-  
+
   Notes
-  
+
   	1. Handles mixed polar and rectangular forms, e.g. 1 + exp(i pi/3)
-  
+
   	2. Symbols in z are assumed to be positive and real.
-  
+
   	3. Negative direction adds -pi to angle.
-  
+
   	   Example: z = (-1)^(1/3), mag(z) = 1/3 pi, mag(-z) = -2/3 pi
-  
+
   	4. jean-francois.debroux reports that when z=(a+i*b)/(c+i*d) then
-  
+
   		arg(numerator(z)) - arg(denominator(z))
-  
+
   	   must be used to get the correct answer. Now the operation is
   	   automatic.
    */
@@ -2029,31 +2029,31 @@
 
   /*
    Bessel J function
-  
+
   	1st arg		x
-  
+
   	2nd arg		n
-  
+
   Recurrence relation
-  
+
   	besselj(x,n) = (2/x) (n-1) besselj(x,n-1) - besselj(x,n-2)
-  
+
   	besselj(x,1/2) = sqrt(2/pi/x) sin(x)
-  
+
   	besselj(x,-1/2) = sqrt(2/pi/x) cos(x)
-  
+
   For negative n, reorder the recurrence relation as
-  
+
   	besselj(x,n-2) = (2/x) (n-1) besselj(x,n-1) - besselj(x,n)
-  
+
   Substitute n+2 for n to obtain
-  
+
   	besselj(x,n) = (2/x) (n+1) besselj(x,n+1) - besselj(x,n+2)
-  
+
   Examples
-  
+
   	besselj(x,3/2) = (1/x) besselj(x,1/2) - besselj(x,-1/2)
-  
+
   	besselj(x,-3/2) = -(1/x) besselj(x,-1/2) - besselj(x,1/2)
    */
 
@@ -2327,22 +2327,22 @@
   /*
   mcopy = (a) ->
   	#unsigned int *b
-  
+
   	b = mnew(MLENGTH(a))
-  
+
   	 * !!! fu
   	#MSIGN(b) = MSIGN(a)
   	#MLENGTH(b) = MLENGTH(a)
-  
+
   	for i in [0...MLENGTH(a)]
   		b[i] = a[i]
-  
+
   	return b
    */
 
 
   /*
-   * 
+   *
    * ge not invoked from anywhere - is you need ge
    * just use the bigNum's ge implementation
    * leaving it here just in case I decide to backport to C
@@ -3144,13 +3144,13 @@
 
   /*
    Convert complex z to clock form
-  
+
   	Input:		push	z
-  
+
   	Output:		Result on stack
-  
+
   	clock(z) = mag(z) * (-1) ^ (arg(z) / pi)
-  
+
   	For example, clock(exp(i pi/3)) gives the result (-1)^(1/3)
    */
 
@@ -7197,9 +7197,9 @@
 
   /*
   Remove terms that involve a given symbol or expression. For example...
-  
+
   	filter(x^2 + x + 1, x)		=>	1
-  
+
   	filter(x^2 + x + 1, x^2)	=>	x + 1
    */
 
@@ -7222,7 +7222,7 @@
 
   /*
    For example...
-  
+
   	push(F)
   	push(X)
   	filter()
@@ -7408,7 +7408,7 @@
   y=2
   for(k,1,9,x=sqrt(2+x),y=2*y/x)
   float(y)
-  
+
   X: k
   B: 1...9
    */
@@ -7888,12 +7888,12 @@
 
   /*
    Returns the coefficient of the imaginary part of complex z
-  
+
   	z		imag(z)
   	-		-------
-  
+
   	a + i b		b
-  
+
   	exp(i a)	sin(a)
    */
 
@@ -8244,13 +8244,13 @@
 
   /*
    Table of integrals
-  
+
   The symbol f is just a dummy symbol for creating a list f(A,B,C,C,...) where
-  
+
   	A	is the template expression
-  
+
   	B	is the result expression
-  
+
   	C	is an optional list of conditional expressions
    */
 
@@ -9097,27 +9097,27 @@
 
   /*
    Laguerre function
-  
+
   Example
-  
+
   	laguerre(x,3)
-  
+
   Result
-  
+
   	   1   3    3   2
   	- --- x  + --- x  - 3 x + 1
   	   6        2
-  
+
   The computation uses the following recurrence relation.
-  
+
   	L(x,0,k) = 1
-  
+
   	L(x,1,k) = -x + k + 1
-  
+
   	n*L(x,n,k) = (2*(n-1)+1-x+k)*L(x,n-1,k) - (n-1+k)*L(x,n-2,k)
-  
+
   In the "for" loop i = n-1 so the recurrence relation becomes
-  
+
   	(i+1)*L(x,n,k) = (2*i+1-x+k)*L(x,n-1,k) - (i+k)*L(x,n-2,k)
    */
 
@@ -9241,15 +9241,15 @@
 
   /*
    Return the leading coefficient of a polynomial.
-  
+
   Example
-  
+
   	leading(5x^2+x+1,x)
-  
+
   Result
-  
+
   	5
-  
+
   The result is undefined if P is not a polynomial.
    */
 
@@ -9288,31 +9288,31 @@
 
   /*
    Legendre function
-  
+
   Example
-  
+
   	legendre(x,3,0)
-  
+
   Result
-  
+
   	 5   3    3
   	--- x  - --- x
   	 2        2
-  
+
   The computation uses the following recurrence relation.
-  
+
   	P(x,0) = 1
-  
+
   	P(x,1) = x
-  
+
   	n*P(x,n) = (2*(n-1)+1)*x*P(x,n-1) - (n-1)*P(x,n-2)
-  
+
   In the "for" loop we have i = n-1 so the recurrence relation becomes
-  
+
   	(i+1)*P(x,n) = (2*i+1)*x*P(x,n-1) - i*P(x,n-2)
-  
+
   For m > 0
-  
+
   	P(x,n,m) = (-1)^m * (1-x^2)^(m/2) * d^m/dx^m P(x,n)
    */
 
@@ -9547,30 +9547,30 @@
 
   /*
    Magnitude of complex z
-  
+
   	z		mag(z)
   	-		------
-  
+
   	a		a
-  
+
   	-a		a
-  
+
   	(-1)^a		1
-  
+
   	exp(a + i b)	exp(a)
-  
+
   	a b		mag(a) mag(b)
-  
+
   	a + i b		sqrt(a^2 + b^2)
-  
+
   Notes
-  
+
   	1. Handles mixed polar and rectangular forms, e.g. 1 + exp(i pi/3)
-  
+
   	2. jean-francois.debroux reports that when z=(a+i*b)/(c+i*d) then
-  
+
   		mag(numerator(z)) / mag(denominator(z))
-  
+
   	   must be used to get the correct answer. Now the operation is
   	   automatic.
    */
@@ -9879,16 +9879,16 @@
   addf(unsigned int *a, unsigned int *b, int len)
   {
   	int i
-  	long long t = 0; # can be signed or unsigned 
+  	long long t = 0; # can be signed or unsigned
   	for (i = 0; i < len; i++) {
   		t += (long long) a[i] + b[i]
   		a[i] = (unsigned int) t
   		t >>= 32
   	}
   }
-  
+
   // a = a - b
-  
+
   static void
   subf(unsigned int *a, unsigned int *b, int len)
   {
@@ -9900,11 +9900,11 @@
   		t >>= 32
   	}
   }
-  
+
   // a = b * c
-  
+
   // 0xffffffff + 0xffffffff * 0xffffffff == 0xffffffff00000000
-  
+
   static void
   mulf(unsigned int *a, unsigned int *b, int len, unsigned int c)
   {
@@ -10786,17 +10786,17 @@
 
   /*
    Partition a term
-  
+
   	Input stack:
-  
+
   		term (factor or product of factors)
-  
+
   		free variable
-  
+
   	Output stack:
-  
+
   		constant expression
-  
+
   		variable expression
    */
 
@@ -10830,11 +10830,11 @@
 
   /*
   Convert complex z to polar form
-  
+
   	Input:		push	z
-  
+
   	Output:		Result on stack
-  
+
   	polar(z) = mag(z) * exp(i * arg(z))
    */
 
@@ -10995,11 +10995,11 @@
 
 
   /* Power function
-  
+
   	Input:		push	Base
-  
+
   			push	Exponent
-  
+
   	Output:		Result on stack
    */
 
@@ -12719,12 +12719,12 @@
 
   /*
    Returns the real part of complex z
-  
+
   	z		real(z)
   	-		-------
-  
+
   	a + i b		a
-  
+
   	exp(i a)	cos(a)
    */
 
@@ -12750,9 +12750,9 @@
 
   /*
   Convert complex z to rectangular form
-  
+
   	Input:		push	z
-  
+
   	Output:		Result on stack
    */
 
@@ -13811,12 +13811,12 @@
           				 * Descartes' solution
           				 * https://en.wikipedia.org/wiki/Quartic_function#Descartes.27_solution
           				 * finding the "u" in the depressed equation
-          
+
           				push_integer(2)
           				push(R_p)
           				multiply()
           				coeff2 = pop()
-          
+
           				push_integer(-4)
           				push(R_p)
           				push_integer(2)
@@ -13825,43 +13825,43 @@
           				push(R_r)
           				multiply()
           				coeff3 = pop()
-          
+
           				push(R_q)
           				push_integer(2)
           				power()
           				negate()
           				coeff4 = pop()
-          
+
           				 * now build the polynomial
           				push(symbol(SECRETX))
           				push_integer(3)
           				power()
-          
+
           				push(coeff2)
           				push(symbol(SECRETX))
           				push_integer(2)
           				power()
           				multiply()
-          
+
           				push(coeff3)
           				push(symbol(SECRETX))
           				multiply()
-          
+
           				push(coeff4)
-          
+
           				add()
           				add()
           				add()
-          
+
           				console.log("Descarte's resolventCubic: " +  stack[tos-1].toString())
           				push(symbol(SECRETX))
-          
+
           				roots()
-          
+
           				resolventCubicSolutions = pop()
           				console.log("Descarte's resolventCubic solutions: " +  resolventCubicSolutions)
           				console.log("tos: " +  tos)
-          
+
           				R_u = null
           				#R_u = resolventCubicSolutions.tensor.elem[1]
           				for eachSolution in resolventCubicSolutions.tensor.elem
@@ -13871,20 +13871,20 @@
           					multiply()
           					push(R_p)
           					add()
-          
+
           					absValFloat()
           					toBeCheckedIFZero = pop()
           					console.log("abs value is: " +  eachSolution)
           					if !iszero(toBeCheckedIFZero)
           						R_u = eachSolution
           						break
-          
+
           				console.log("chosen solution: " +  R_u)
-          
+
           				push(R_u)
           				negate()
           				R_s = pop()
-          
+
           				push(R_p)
           				push(R_u)
           				push_integer(2)
@@ -13897,7 +13897,7 @@
           				push_integer(2)
           				divide()
           				R_t = pop()
-          
+
           				push(R_p)
           				push(R_u)
           				push_integer(2)
@@ -13910,41 +13910,41 @@
           				push_integer(2)
           				divide()
           				R_v = pop()
-          
+
           				 * factoring the quartic into two quadratics:
-          
+
           				 * now build the polynomial
           				push(symbol(SECRETX))
           				push_integer(2)
           				power()
-          
+
           				push(R_s)
           				push(symbol(SECRETX))
           				multiply()
-          
+
           				push(R_t)
-          
+
           				add()
           				add()
-          
+
           				console.log("factored quartic 1: " + stack[tos-1].toString())
-          
+
           				push(symbol(SECRETX))
           				push_integer(2)
           				power()
-          
+
           				push(R_u)
           				push(symbol(SECRETX))
           				multiply()
-          
+
           				push(R_v)
-          
+
           				add()
           				add()
-          
+
           				console.log("factored quartic 2: " + stack[tos-1].toString())
           				pop()
-          
+
           				restore()
           				return
            */
@@ -15100,26 +15100,26 @@
 
   /*
    Simplify factorials
-  
+
   The following script
-  
+
   	F(n,k) = k binomial(n,k)
   	(F(n,k) + F(n,k-1)) / F(n+1,k)
-  
+
   generates
-  
+
          k! n!             n! (1 - k + n)!              k! n!
    -------------------- + -------------------- - ----------------------
    (-1 + k)! (1 + n)!     (1 + n)! (-k + n)!     k (-1 + k)! (1 + n)!
-  
+
   Simplify each term to get
-  
+
      k       1 - k + n       1
   ------- + ----------- - -------
    1 + n       1 + n       1 + n
-  
+
   Then simplify the sum to get
-  
+
      n
   -------
    1 + n
@@ -15183,7 +15183,7 @@
   	}
   	restore()
   }
-  
+
   #endif
    */
 
@@ -15891,7 +15891,7 @@
         			lowercase_b = null
         			for SOLUTION in possibleSolutions
         				console.log("testing solution: " + SOLUTION.toString())
-        
+
         				debugger
         				if equalq(exponent,1,3)
         					push(A)
@@ -15920,9 +15920,9 @@
         					push_rational(1,2)
         					power()
         				console.log("b is: " + stack[tos-1].toString())
-        
+
         				lowercase_b = pop()
-        
+
         				if !Find(lowercase_b, symbol(POWER))
         					break
          */
@@ -16214,13 +16214,13 @@
 
   /*
   	Substitute new expr for old expr in expr.
-  
+
   	Input:	push	expr
-  
+
   		push	old expr
-  
+
   		push	new expr
-  
+
   	Output:	Result on stack
    */
 
@@ -16430,7 +16430,7 @@
 
   /*
   Taylor expansion of a function
-  
+
   	push(F)
   	push(X)
   	push(N)
@@ -16531,19 +16531,19 @@
 
 
   /* Tensor =====================================================================
-  
+
   Tags
   ----
   [[scripting]] [[JS]] [[internal]] [[treenode]] [[generalconcept]]
-  
+
   General description
   -------------------
   A tensor is...
-  
+
   Limitations
   -----------
   n.a.
-  
+
   Implementation info
   -------------------
   Tensors are implemented...
@@ -17119,25 +17119,25 @@
 
   /*
   Transform an expression using table look-up
-  
+
   The expression and free variable are on the stack.
-  
+
   The argument s is a null terminated list of transform rules.
-  
+
   For example, see the itab (integrals table)
-  
+
   Internally, the following symbols are used:
-  
+
   	F	input expression
-  
+
   	X	free variable, i.e. F of X
-  
+
   	A	template expression
-  
+
   	B	result expression
-  
+
   	C	list of conditional expressions
-  
+
   Puts the final expression on top of stack
   (whether it's transformed or not) and returns
   true is successful, false if not.
@@ -17686,16 +17686,16 @@
 
   /*
   // up to 100 blocks of 100,000 atoms
-  
+
   #define M 100
   #define N 100000
-  
+
   U *mem[M]
   int mcount
-  
+
   U *free_list
   int free_count
-  
+
   U *
   alloc(void)
   {
@@ -17742,23 +17742,23 @@
 
   /*
   // garbage collector
-  
+
   void
   gc(void)
   {
   	int i, j
   	U *p
-  
+
   	// tag everything
-  
+
   	for (i = 0; i < mcount; i++) {
   		p = mem[i]
   		for (j = 0; j < N; j++)
   			p[j].tag = 1
   	}
-  
+
   	// untag what's used
-  
+
   	untag(p0)
   	untag(p1)
   	untag(p2)
@@ -17769,26 +17769,26 @@
   	untag(p7)
   	untag(p8)
   	untag(p9)
-  
+
   	untag(one)
   	untag(zero)
   	untag(imaginaryunit)
-  
+
   	for (i = 0; i < NSYM; i++) {
   		untag(binding[i])
   		untag(arglist[i])
   	}
-  
+
   	for (i = 0; i < tos; i++)
   		untag(stack[i])
-  
+
   	for (i = (int) (frame - stack); i < TOS; i++)
   		untag(stack[i])
-  
+
   	// collect everything that's still tagged
-  
+
   	free_count = 0
-  
+
   	for (i = 0; i < mcount; i++) {
   		p = mem[i]
   		for (j = 0; j < N; j++) {
@@ -17814,12 +17814,12 @@
   		}
   	}
   }
-  
+
   void
   untag(U *p)
   {
   	int i
-  
+
   	if (iscons(p)) {
   		do {
   			if (p->tag == 0)
@@ -17831,7 +17831,7 @@
   		untag(p)
   		return
   	}
-  
+
   	if (p->tag) {
   		p->tag = 0
    		if (istensor(p)) {
@@ -17840,9 +17840,9 @@
   		}
   	}
   }
-  
+
   // get memory for 100,000 atoms
-  
+
   void
   alloc_mem(void)
   {
@@ -17862,18 +17862,18 @@
   	free_list = p
   	free_count += N
   }
-  
+
   void
   print_mem_info(void)
   {
   	char buf[100]
-  
+
   	sprintf(buf, "%d blocks (%d bytes/block)\n", N * mcount, (int) sizeof (U))
   	printstr(buf)
-  
+
   	sprintf(buf, "%d free\n", free_count)
   	printstr(buf)
-  
+
   	sprintf(buf, "%d used\n", N * mcount - free_count)
   	printstr(buf)
   }
@@ -18897,9 +18897,9 @@
 
     /*
     	if 0
-    
+
     		 * left brace
-    
+
     		for (i = 0; i < h; i++) {
     			if (yindex == YMAX)
     				break
@@ -18908,11 +18908,11 @@
     			chartab[yindex].y = y + i
     			yindex++
     		}
-    
+
     		 * right brace
-    
+
     		emit_x++
-    
+
     		for (i = 0; i < h; i++) {
     			if (yindex == YMAX)
     				break
@@ -18921,9 +18921,9 @@
     			chartab[yindex].y = y + i
     			yindex++
     		}
-    
+
     		emit_x++
-    
+
     	endif
      */
   };
@@ -18958,7 +18958,7 @@
   {
   	test(__FILE__, s, sizeof s / sizeof (char *))
   }
-  
+
   #endif
    */
 
@@ -19239,7 +19239,7 @@
 
   /*
   #if SELFTEST
-  
+
   void
   test_mcmp(void)
   {
@@ -19269,7 +19269,7 @@
   	}
   	logout("ok\n")
   }
-  
+
   #endif
    */
 
@@ -19507,7 +19507,7 @@
     		testResult[2] == "// g is part of a cyclic dependency, no code generated.\n// f is part of a cyclic dependency, no code generated."
     	else
     			console.log "fail dependency test. expected: " + testResult
-    
+
     	clear_symbols(); defn()
      */
     testResult = findDependenciesInScript('f = roots(a*x^2 + b*x + c, x)');
