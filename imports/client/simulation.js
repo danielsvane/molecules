@@ -41,7 +41,7 @@ export default class Simulation {
     camera.position.x = this.bounds;
     camera.position.y = this.bounds;
     camera.lookAt(new THREE.Vector3(0,0,0));
-    controls.enableZoom = true;
+    controls.enableKeys = false;
     scene.add(light);
 
     this.THREE = THREE;

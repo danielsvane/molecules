@@ -4,25 +4,32 @@
 </head>
 
 <body>
-  <div class="menu">
 
-    <h1>Hydrogenic wave function visualization</h1>
+  <div class="menu-container">
+    <div class="menu">
 
-    <hr>
+      <h1>Hydrogenic wave function visualization</h1>
+      <p>Generates hydrogenic wave functions from the <var>n</var>, <var>l</var> and <var>m</var> quantum numbers. The wave is visualised as the square modulus
+        (probability), by taking random coordinates inside the sphere marked by black dots, and calculating the probability. The probability is represented as a white
+        dot with varying transparency.</p>
+      <p>The source code is available <a href="https://github.com/danielsvane/molecules">here</a>.</p>
 
-    <h2>Options</h2>
+      <h2>Options</h2>
+      <p>Select <var>n</var>, <var>l</var> and <var>m</var> quantum numbers for the wave function. Change bounding radius (black dots) to limit where the particles
+        are generated. Increase the amount of particles for better/worse visualization, maximum is around 10000 particles.</p>
 
-    {{> menu}}
+      {{> menu}}
 
-    <hr>
+      <h2>Calculations</h2>
+      <p>The calculations below are based on <a href="https://www.goodreads.com/book/show/153908.Introduction_to_Quantum_Mechanics">Introduction to Quantum Mechanics
+        (2nd Edition) by David J. Griffiths</a> and <a href="https://en.wikipedia.org/wiki/Hydrogen_atom">Wikipedia</a>.</p>
 
-    <h2>Calculated functions</h2>
-
-    <div id="radial"></div>
-    <div id="harmonic"></div>
-    <div id="wave"></div>
-    <div id="waveconj"></div>
-    <div id="wavesquared"></div>
+      <div id="radial"></div>
+      <div id="harmonic"></div>
+      <div id="wave"></div>
+      <div id="waveconj"></div>
+      <div id="wavesquared"></div>
+    </div>
   </div>
 
   {{> simulation}}
@@ -73,7 +80,7 @@
     </div>
     <div class="form-group">
       <div class="col-sm-offset-6 col-sm-10">
-        <div id="update" class="btn btn-primary">Update</div>
+        <button type="submit" id="update" class="btn btn-primary">Update</button>
       </div>
     </div>
   </form>
