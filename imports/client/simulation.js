@@ -6,7 +6,6 @@ import katex from "katex";
 import $ from "jquery";
 import nearley from "nearley";
 import grammar from "/imports/client/arithmetic";
-import Detector from "./detector";
 
 let parse = function(eq){
   let parser = new nearley.Parser(grammar.ParserRules, grammar.ParserStart);
@@ -35,7 +34,7 @@ export default class Simulation {
     //let THREE = THREELib(["OrbitControls"]);
     let scene = new THREE.Scene();
     let camera = new THREE.PerspectiveCamera( 75, $(".simulation").width()/$(".simulation").height(), 0.1, 1000 );
-    let renderer = Detector.webgl? new THREE.WebGLRenderer({antialias: true}): new THREE.CanvasRenderer();
+    let renderer = new THREE.WebGLRenderer({antialias: true});
     let controls = new THREE.OrbitControls( camera, renderer.domElement );
     let light = new THREE.HemisphereLight( 0xffffff, 0x444444, 1 );
 
