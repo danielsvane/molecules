@@ -56,6 +56,7 @@ Template.menu.events({
     simulation.removeAllObjects();
     simulation.bounds = bounds;
     simulation.particleCount = particleCount;
+    simulation.drawCoordinateSystem();
     simulation.addCloud(eq);
   },
   "click .increase-select": function(event){
@@ -88,6 +89,7 @@ Template.menu.events({
 
 Meteor.startup(() => {
   simulation.init();
+  simulation.drawCoordinateSystem();
   let eq = simulation.getWaveFunction(0, 0, 1);
   simulation.addCloud(eq);
   simulation.render();

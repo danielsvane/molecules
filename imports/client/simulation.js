@@ -19,16 +19,19 @@ let replaceSingle = function(string, target, source){
   return string.replace(new RegExp("([^a-zA-Z]|^)("+target+")([^a-zA-Z]|$)", "g"), "$1"+source+"$3");
 }
 
+let THREE = THREELib(["OrbitControls"]);
+
 export default class Simulation {
 
   constructor(){
     this.exp = /([^a-zA-Z]|^)(x)([^a-zA-Z]|$)/g;
     this.bounds = 12;
     this.particleCount = 4000;
+    this.eq = "";
   }
 
   init(){
-    let THREE = THREELib(["OrbitControls"]);
+    //let THREE = THREELib(["OrbitControls"]);
     let scene = new THREE.Scene();
     let camera = new THREE.PerspectiveCamera( 75, $(".simulation").width()/$(".simulation").height(), 0.1, 1000 );
     let renderer = new THREE.WebGLRenderer({antialias: true});
@@ -181,6 +184,7 @@ export default class Simulation {
     console.log("parsed wave function: ", parsed);
     console.log("");
 
+    this.eq = parsed;
     return parsed;
   }
 
@@ -220,6 +224,61 @@ export default class Simulation {
     scene.add(obj);
   }
 
+  drawCoordinateSystem(){
+    let bounds = this.bounds;
+    this.drawAxis(bounds, 0, 0, "x");
+    this.drawAxis(0, bounds, 0, "y");
+    this.drawAxis(0, 0, bounds, "z");
+  }
+
+  drawAxis(x, y, z, label){
+    var material = new this.THREE.LineBasicMaterial({
+      color: 0x000000
+    });
+    material.transparent = true;
+    material.opacity = 0.1;
+
+    var geometry = new this.THREE.Geometry();
+    geometry.vertices.push(
+      new this.THREE.Vector3( -x, -y, -z ),
+      new this.THREE.Vector3( x, y, z )
+    );
+    var line = new this.THREE.Line( geometry, material );
+    this.scene.add( line );
+
+    let labelPositive = this.makeTextSprite(label);
+    labelPositive.position[label] = this.bounds+0.3;
+    this.scene.add(labelPositive);
+
+    let labelNegative = this.makeTextSprite("-"+label);
+    labelNegative.position[label] = -this.bounds-0.3;
+    this.scene.add(labelNegative);
+  }
+
+  makeTextSprite( message ){
+    let fontsize = 25;
+    var canvas = document.createElement('canvas');
+    canvas.width = 32;
+    canvas.height = 32;
+
+    var context = canvas.getContext('2d');
+    context.font = fontsize+"px sans-serif";
+    context.fillStyle = "#000000";
+    context.textAlign = "center";
+    context.fillText( message, canvas.width/2, canvas.height/2+fontsize/4);
+
+    var texture = new THREE.Texture(canvas);
+    texture.needsUpdate = true;
+
+    var spriteMaterial = new THREE.SpriteMaterial( { map: texture, opacity: 0.4 } );
+    var sprite = new THREE.Sprite( spriteMaterial );
+
+    let scale = 0.7;
+    sprite.scale.set(scale, scale, scale);
+
+    return sprite;
+  }
+
   generateRandomPoint(bounds){
     let x = Math.random()*bounds*2-bounds;
     let y = Math.random()*bounds*2-bounds;
@@ -240,7 +299,6 @@ export default class Simulation {
       let val = this.getFunctionValue(eq, p.x, p.y, p.z);
       points.push(p);
       values.push(val);
-      //this.addSprite(p.x, p.y, p.z, val*2000);
     });
 
     // Normalise the opacities
@@ -252,20 +310,8 @@ export default class Simulation {
     for(let i in values){
       let val = values[i]/max;
       let p = points[i];
-
       if(val > 0.01) this.addSprite(p.x, p.y, p.z, val);
     }
-
-    let boundsColor = 0x000000; //0x337ab7;
-    let boundsOpacity = 0.2;
-
-    this.addSprite(0, 0, 0, boundsOpacity, boundsColor);
-    this.addSprite(bounds, 0, 0, boundsOpacity, boundsColor);
-    this.addSprite(-bounds, 0, 0, boundsOpacity, boundsColor);
-    this.addSprite(0, bounds, 0, boundsOpacity, boundsColor);
-    this.addSprite(0, -bounds, 0, boundsOpacity, boundsColor);
-    this.addSprite(0, 0, bounds, boundsOpacity, boundsColor);
-    this.addSprite(0, 0, -bounds, boundsOpacity, boundsColor);
   }
 
   addSprite(x, y, z, opacity = 1, color = 0xffffff){
@@ -292,6 +338,5 @@ export default class Simulation {
     let p = Math.atan2(y, x);
 
     return eval(eq);
-    //return Algebrite.eval(eq, "r", r, "t", t, "p", p).d;
   }
 }
