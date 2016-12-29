@@ -10,6 +10,11 @@ let ns = [1, 2, 3, 4];
 let ls = [0];
 let ms = [0];
 
+// Default quantum numbers
+let n = 2;
+let l = 1;
+let m = 0;
+
 $(window).on("resize", () => {
   simulation.camera.aspect = $(".simulation").width() / $(".simulation").height();
   simulation.camera.updateProjectionMatrix();
@@ -25,10 +30,10 @@ Template.menu.helpers({
   }
 })
 
-let generateOptions = function(input){
+let generateOptions = function(input, selectedIndex = 0){
   let html = "";
   for(let i of input){
-    if(i === 0) html += "<option selected>"+i+"</option>";
+    if(i === selectedIndex) html += "<option selected>"+i+"</option>";
     else html += "<option>"+i+"</option>";
   }
   return html;
@@ -88,9 +93,13 @@ Template.menu.events({
 })
 
 Meteor.startup(() => {
+  $("#n").html(generateOptions(ns, n));
+  $("#l").html(generateOptions(simulation.getls(n), l));
+  $("#m").html(generateOptions(simulation.getms(l), m));
+
   simulation.init();
   simulation.drawCoordinateSystem();
-  let eq = simulation.getWaveFunction(0, 0, 1);
+  let eq = simulation.getWaveFunction(l, m, n);
   simulation.addCloud(eq);
   simulation.render();
 });
