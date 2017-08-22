@@ -23,10 +23,12 @@ let THREE = THREELib(["OrbitControls"]);
 
 export default class Simulation {
 
-  constructor(){
+  constructor(n, l, m, bounds, particleCount){
     this.exp = /([^a-zA-Z]|^)(x)([^a-zA-Z]|$)/g;
-    this.bounds = 12;
-    this.particleCount = 4000;
+    this.bounds = bounds;
+    this.particleCount = particleCount;
+    //this.calculateBounds(n, l);
+    //this.calculateParticles();
     this.eq = "";
   }
 
@@ -161,7 +163,18 @@ export default class Simulation {
     return eq;
   }
 
+  calculateBounds(n, l){
+    this.bounds = n*5;
+  }
+
+  calculateParticles(){
+    this.particleCount = Math.round(Math.pow(this.bounds*2, 3));
+  }
+
   getWaveFunction(l, m, n){
+    //this.calculateBounds(n, l);
+    //this.calculateParticles();
+
     let eq = "(R_ln)*(Y_lm)";
     eq = replaceSingle(eq, "R_ln", this.getRadialWave(l, n));
     eq = replaceSingle(eq, "Y_lm", this.getSphericalHarmonics(l, m));
@@ -185,6 +198,7 @@ export default class Simulation {
     console.log("");
 
     this.eq = parsed;
+    this.compileFunction(parsed);
     return parsed;
   }
 
@@ -288,30 +302,101 @@ export default class Simulation {
     else return this.generateRandomPoint(bounds);
   }
 
-  addCloud(eq){
-    //console.log(Algebrite.run(eq.toString()));
-
+  generatePoints(bounds, eq){
+    let multiplier = 2;
     let values = [];
     let points = [];
-    let bounds = this.bounds;
+
+    for(let x=-bounds*multiplier; x<bounds*multiplier; x++){
+      for(let y = -bounds*multiplier; y<bounds*multiplier; y++){
+        for(let z = -bounds*multiplier; z<bounds*multiplier; z++){
+          let p = {x: x/multiplier, y: y/multiplier, z: z/multiplier};
+          let val = this.getFunctionValue(eq, p.x, p.y, p.z);
+            points.push(p);
+            values.push(val);
+        }
+      }
+    }
+
+    return {values: values, points: points};
+  }
+
+  generateRandomPoints(bounds){
+    let values = [];
+    let points = [];
+
     _.times(this.particleCount, (n) => {
       let p = this.generateRandomPoint(bounds);
-      let val = this.getFunctionValue(eq, p.x, p.y, p.z);
+      let val = this.getFunctionValue(p.x, p.y, p.z);
       points.push(p);
       values.push(val);
     });
 
+    return {values: values, points: points};
+  }
+
+  addCloud(){
+
+    let g = this.generateRandomPoints(this.bounds);
+    let values = g.values;
+    let points = g.points;
+
     // Normalise the opacities
+    let positions = [];
+    let alphas = [];
+
     let max = 0;
     for(let i in values){
-      let val = values[i];
-      if(val > max) max = val;
+      if(values[i] > max) max = values[i];
     }
     for(let i in values){
-      let val = values[i]/max;
-      let p = points[i];
-      if(val > 0.01) this.addSprite(p.x, p.y, p.z, val);
+      values[i] = values[i]/max;
+      if(values[i] > 0.02){
+        positions.push(points[i]);
+        alphas.push(values[i]);
+      }
     }
+
+    this.createPointCloud(positions, alphas);
+  }
+
+  createPointCloud(points, values){
+
+    let geometry = new THREE.BufferGeometry();
+
+    // uniforms
+    let uniforms = {
+        color: { value: new THREE.Color( 0xffffff ) },
+        texture: { value: this.spriteMap }
+    };
+
+    // point cloud material
+    let material = new THREE.ShaderMaterial({
+        uniforms:       uniforms,
+        vertexShader:   document.getElementById( 'vertexshader' ).textContent,
+        fragmentShader: document.getElementById( 'fragmentshader' ).textContent,
+        transparent:    true,
+        depthTest: false
+    });
+
+
+    let positions = new Float32Array(points.length*3);
+    let alphas = new Float32Array(points.length);
+
+    for(let i in points){
+      positions[i*3] = points[i].x;
+      positions[i*3+1] = points[i].y;
+      positions[i*3+2] = points[i].z;
+
+      alphas[i] = values[i];
+    }
+
+    geometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
+    geometry.addAttribute( 'alpha', new THREE.BufferAttribute( alphas, 1 ) );
+
+    let pointCloud = new THREE.Points(geometry, material);
+
+    this.scene.add(pointCloud);
   }
 
   addSprite(x, y, z, opacity = 1, color = 0xffffff){
@@ -332,11 +417,21 @@ export default class Simulation {
     this.scene.add(sprite);
   }
 
-  getFunctionValue(eq, x, y, z){
+  compileFunction(eq){
+    this.functionValue = Function('r', 't', 'p', "return "+eq);
+  }
+
+  getFunctionValue(x, y, z){
     let r = Math.sqrt(x*x + y*y + z*z);
     let t = Math.acos(z/r);
     let p = Math.atan2(y, x);
 
-    return eval(eq);
+    return this.functionValue(r, t, p);;
+  }
+
+  update(){
+    this.removeAllObjects();
+    this.drawCoordinateSystem();
+    this.addCloud();
   }
 }

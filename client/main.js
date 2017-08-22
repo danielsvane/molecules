@@ -2,18 +2,23 @@ import Simulation from "/imports/client/simulation";
 import $ from "jquery";
 import _ from "lodash";
 import "/node_modules/bootstrap/dist/css/bootstrap.css"
+import "/node_modules/bootstrap-slider/dist/css/bootstrap-slider.min.css"
 import './main.html';
 import "/imports/client/analytics";
+import Slider from "bootstrap-slider";
+import "/imports/client/main.css"
 
-let simulation = new Simulation();
-let ns = [1, 2, 3, 4];
+// Default quantum numbers
+let n = 3;
+let l = 1;
+let m = 0;
+
+let simulation = new Simulation(n, l, m, 20, 150000);
+let ns = [1, 2, 3, 4, 5];
 let ls = [0];
 let ms = [0];
 
-// Default quantum numbers
-let n = 2;
-let l = 1;
-let m = 0;
+let needsUpdate = false;
 
 $(window).on("resize", () => {
   simulation.camera.aspect = $(".simulation").width() / $(".simulation").height();
@@ -44,25 +49,25 @@ Template.menu.events({
     let n = parseInt($("#n").val());
     $("#l").html(generateOptions(simulation.getls(n)));
     $("#m").html(generateOptions([0]));
+    needsUpdate = true;
+
   },
   "change #l": function(){
     let l = parseInt($("#l").val());
     $("#m").html(generateOptions(simulation.getms(l)));
+    needsUpdate = true;
+  },
+  "change #m": function(){
+    needsUpdate = true;
   },
   "click #update": function(event){
     event.preventDefault();
     let n = parseInt($("#n").val());
     let l = parseInt($("#l").val());
     let m = parseInt($("#m").val());
-    let bounds = parseInt($("#bounds").val());
-    let particleCount = parseInt($("#particleCount").val());
-    let eq = simulation.getWaveFunction(l, m, n);
 
-    simulation.removeAllObjects();
-    simulation.bounds = bounds;
-    simulation.particleCount = particleCount;
-    simulation.drawCoordinateSystem();
-    simulation.addCloud(eq);
+    simulation.getWaveFunction(l, m, n);
+    simulation.update();
   },
   "click .increase-select": function(event){
     let el = $(event.target).parent().prev();
@@ -89,6 +94,14 @@ Template.menu.events({
       if(next <= 0) return 0;
       else return next;
     });
+  },
+  "slideStop #bounds": function(event){
+    simulation.bounds = event.value;
+    simulation.update();
+  },
+  "slideStop #particleCount": function(event){
+    simulation.particleCount = event.value;
+    simulation.update();
   }
 })
 
@@ -97,9 +110,12 @@ Meteor.startup(() => {
   $("#l").html(generateOptions(simulation.getls(n), l));
   $("#m").html(generateOptions(simulation.getms(l), m));
 
+  $("#bounds").slider();
+  $("#particleCount").slider();
+  $(".tooltip", $(".slider")).css('pointer-events','none');
+
   simulation.init();
-  simulation.drawCoordinateSystem();
-  let eq = simulation.getWaveFunction(l, m, n);
-  simulation.addCloud(eq);
+  simulation.getWaveFunction(l, m, n);
+  simulation.update();
   simulation.render();
 });
