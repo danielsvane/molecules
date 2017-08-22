@@ -119,7 +119,7 @@ export default class Simulation {
     eq = replaceSingle(eq, "a", 1);
 
     res = Algebrite.simplify(eq);
-    katex.render("Y^{"+m+"}_{"+l+"} = " + res.toLatexString(), $("#harmonic")[0], {displayMode: true});
+    katex.render("Y^{"+m+"}_{"+l+"} = " + this.replaceLatex(res.toLatexString()), $("#harmonic")[0], {displayMode: true});
 
     console.log("spherical harmonic: ", res.toString());
     return eq.toString();
@@ -135,7 +135,7 @@ export default class Simulation {
 
     res = Algebrite.simplify(eq);
 
-    katex.render("R_{"+n+l+"} = " + res.toLatexString(), $("#radial")[0], {displayMode: true});
+    katex.render("R_{"+n+l+"} = " + this.replaceLatex(res.toLatexString()), $("#radial")[0], {displayMode: true});
 
     console.log("radial wave: ", res.toString());
     return res.toString();
@@ -184,8 +184,9 @@ export default class Simulation {
     let conj = Algebrite.simplify(Algebrite.multiply(Algebrite.real(eq), Algebrite.real(eq)));
     //let conj = Algebrite.simplify(Algebrite.multiply(Algebrite.conj(res), res));
 
-    katex.render("\\psi_{"+n+l+m+"} = " + res.toLatexString(), $("#wave")[0], {displayMode: true});
-    katex.render("|\\psi_{"+n+l+m+"}|^2 = " + conj.toLatexString(), $("#wavesquared")[0], {displayMode: true});
+
+    katex.render("\\psi_{"+n+l+m+"} = " + this.replaceLatex(res.toLatexString()), $("#wave")[0], {displayMode: true});
+    katex.render("|\\psi_{"+n+l+m+"}|^2 = " + this.replaceLatex(conj.toLatexString()), $("#wavesquared")[0], {displayMode: true});
 
     console.log("wave function: ", res.toString());
     console.log("complex conjugated wave function: ", conj.toString());
@@ -200,6 +201,12 @@ export default class Simulation {
     this.eq = parsed;
     this.compileFunction(parsed);
     return parsed;
+  }
+
+  replaceLatex(latex){
+    latex = replaceSingle(latex, "t", "\\theta");
+    latex = replaceSingle(latex, "p", "\\phi");
+    return latex;
   }
 
   addAtom(eq){
