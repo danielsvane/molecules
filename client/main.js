@@ -99,6 +99,10 @@ Template.menu.events({
     simulation.bounds = event.value;
     simulation.update();
   },
+  "change #bounds": function(event){
+    simulation.bounds = event.value.newValue;
+    simulation.updateCoordinateSystem();
+  },
   "slideStop #particleCount": function(event){
     simulation.particleCount = event.value;
     simulation.update();

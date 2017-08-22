@@ -247,24 +247,39 @@ export default class Simulation {
 
   drawCoordinateSystem(){
     let bounds = this.bounds;
-    this.drawAxis(bounds, 0, 0, "x");
-    this.drawAxis(0, bounds, 0, "y");
-    this.drawAxis(0, 0, bounds, "z");
+    this.coordinateSystem = [];
+    this.coordinateSystem.push(this.drawAxis(bounds, 0, 0, "x"));
+    this.coordinateSystem.push(this.drawAxis(0, bounds, 0, "y"));
+    this.coordinateSystem.push(this.drawAxis(0, 0, bounds, "z"));
+  }
+
+  updateCoordinateSystem(){
+    this.updateAxis(this.coordinateSystem[0], "x");
+    this.updateAxis(this.coordinateSystem[1], "y");
+    this.updateAxis(this.coordinateSystem[2], "z");
+  }
+
+  updateAxis(axis, direction){
+    axis.line.geometry.vertices[0][direction] = -this.bounds;
+    axis.line.geometry.vertices[1][direction] = this.bounds;
+    axis.labelNegative.position[direction] = -this.bounds-0.3;
+    axis.labelPositive.position[direction] = this.bounds+0.3;
+    axis.line.geometry.verticesNeedUpdate = true;
   }
 
   drawAxis(x, y, z, label){
-    var material = new this.THREE.LineBasicMaterial({
+    let material = new this.THREE.LineBasicMaterial({
       color: 0x000000
     });
     material.transparent = true;
-    material.opacity = 0.1;
+    material.opacity = 0.2;
 
-    var geometry = new this.THREE.Geometry();
+    let geometry = new this.THREE.Geometry();
     geometry.vertices.push(
       new this.THREE.Vector3( -x, -y, -z ),
       new this.THREE.Vector3( x, y, z )
     );
-    var line = new this.THREE.Line( geometry, material );
+    let line = new this.THREE.Line( geometry, material );
     this.scene.add( line );
 
     let labelPositive = this.makeTextSprite(label);
@@ -274,6 +289,8 @@ export default class Simulation {
     let labelNegative = this.makeTextSprite("-"+label);
     labelNegative.position[label] = -this.bounds-0.3;
     this.scene.add(labelNegative);
+
+    return {line: line, labelPositive: labelPositive, labelNegative: labelNegative};
   }
 
   makeTextSprite( message ){
@@ -291,7 +308,7 @@ export default class Simulation {
     var texture = new THREE.Texture(canvas);
     texture.needsUpdate = true;
 
-    var spriteMaterial = new THREE.SpriteMaterial( { map: texture, opacity: 0.4 } );
+    var spriteMaterial = new THREE.SpriteMaterial( { map: texture, opacity: 0.5 } );
     var sprite = new THREE.Sprite( spriteMaterial );
 
     let scale = 0.7;
