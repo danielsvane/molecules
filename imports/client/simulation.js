@@ -23,22 +23,19 @@ let THREE = THREELib(["OrbitControls"]);
 
 export default class Simulation {
 
-  constructor(n, l, m, bounds, particleCount){
+  constructor(n, l, m, radius, theta, phi, particleCount){
     this.exp = /([^a-zA-Z]|^)(x)([^a-zA-Z]|$)/g;
-    this.bounds = bounds;
+    this.bounds = radius;
     this.particleCount = particleCount;
-    //this.calculateBounds(n, l);
-    //this.calculateParticles();
+    this.phi = phi;
+    this.theta = theta;
     this.eq = "";
   }
 
   init(){
-    //let THREE = THREELib(["OrbitControls"]);
     let scene = new THREE.Scene();
     let camera = new THREE.PerspectiveCamera( 75, $(".simulation").width()/$(".simulation").height(), 0.1, 1000 );
-    let renderer = new THREE.WebGLRenderer({antialias: true});
-    let controls = new THREE.OrbitControls( camera, renderer.domElement );
-    let light = new THREE.HemisphereLight( 0xffffff, 0x444444, 1 );
+    let renderer = new THREE.WebGLRenderer({antialias: false});
 
     scene.background = new THREE.Color(0x333333);
     renderer.setSize( $(".simulation").width(), $(".simulation").height() );
@@ -46,14 +43,17 @@ export default class Simulation {
     camera.position.x = this.bounds;
     camera.position.y = this.bounds;
     camera.lookAt(new THREE.Vector3(0,0,0));
+    camera.up = new THREE.Vector3( 0, 0, 1 );
+
+    let controls = new THREE.OrbitControls( camera, renderer.domElement );
     controls.enableKeys = false;
-    scene.add(light);
 
     this.THREE = THREE;
     this.scene = scene;
     this.renderer = renderer;
     this.camera = camera;
     this.spriteMap = new THREE.TextureLoader().load( "circle.png" );
+    this.sphereMaterial = new THREE.MeshBasicMaterial({transparent: true, opacity: 0.2, side: THREE.DoubleSide, depthTest: false});
 
     $(".simulation").html( renderer.domElement );
 
@@ -65,8 +65,16 @@ export default class Simulation {
     this.renderer.render(this.scene, this.camera);
   }
 
-  removeAllObjects(){
-    this.scene.children = [];
+  createSphere(){
+    let geometry = new THREE.SphereBufferGeometry(this.bounds, 32, 32, 0, this.phi, 0, this.theta);
+    let sphere = new THREE.Mesh(geometry, this.sphereMaterial);
+    sphere.rotateX(Math.PI/2);
+    sphere.name = "sphere";
+    this.scene.add(sphere);
+  }
+
+  removeObject(name){
+    this.scene.remove( this.scene.getObjectByName(name) );
   }
 
   // Returns the possible values of l a given n
@@ -163,26 +171,14 @@ export default class Simulation {
     return eq;
   }
 
-  calculateBounds(n, l){
-    this.bounds = n*5;
-  }
-
-  calculateParticles(){
-    this.particleCount = Math.round(Math.pow(this.bounds*2, 3));
-  }
-
   getWaveFunction(l, m, n){
-    //this.calculateBounds(n, l);
-    //this.calculateParticles();
 
     let eq = "(R_ln)*(Y_lm)";
     eq = replaceSingle(eq, "R_ln", this.getRadialWave(l, n));
     eq = replaceSingle(eq, "Y_lm", this.getSphericalHarmonics(l, m));
 
     let res = Algebrite.simplify(eq);
-    //let conj = res;
     let conj = Algebrite.simplify(Algebrite.multiply(Algebrite.real(eq), Algebrite.real(eq)));
-    //let conj = Algebrite.simplify(Algebrite.multiply(Algebrite.conj(res), res));
 
 
     katex.render("\\psi_{"+n+l+m+"} = " + this.replaceLatex(res.toLatexString()), $("#wave")[0], {displayMode: true});
@@ -419,26 +415,9 @@ export default class Simulation {
     geometry.addAttribute( 'alpha', new THREE.BufferAttribute( alphas, 1 ) );
 
     let pointCloud = new THREE.Points(geometry, material);
+    pointCloud.name = "cloud";
 
     this.scene.add(pointCloud);
-  }
-
-  addSprite(x, y, z, opacity = 1, color = 0xffffff){
-    var spriteMaterial = new this.THREE.SpriteMaterial({
-      map: this.spriteMap,
-      color: color,
-      opacity: opacity
-    });
-    let sprite = new this.THREE.Sprite(spriteMaterial);
-
-    let scale = 0.5;
-    sprite.scale.set(scale, scale, scale);
-
-    sprite.position.x = x;
-    sprite.position.y = y;
-    sprite.position.z = z;
-
-    this.scene.add(sprite);
   }
 
   compileFunction(eq){
@@ -450,12 +429,14 @@ export default class Simulation {
     let t = Math.acos(z/r);
     let p = Math.atan2(y, x);
 
-    return this.functionValue(r, t, p);;
+    // Check if the generated point lies within the boundaries defined by theta and phi.
+    // Phi needs to be adjusted by pi, as atan2 returns between -pi and pi.
+    if(t < this.theta && p < this.phi-Math.PI) return this.functionValue(r, t, p);
+    else return 0;
   }
 
   update(){
-    this.removeAllObjects();
-    this.drawCoordinateSystem();
+    this.removeObject("cloud");
     this.addCloud();
   }
 }

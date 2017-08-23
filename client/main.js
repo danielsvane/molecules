@@ -8,17 +8,19 @@ import "/imports/client/analytics";
 import Slider from "bootstrap-slider";
 import "/imports/client/main.css"
 
-// Default quantum numbers
+// Default values
 let n = 3;
 let l = 1;
 let m = 0;
+let radius = 20;
+let particleCount = 150000;
+let theta = Math.PI;
+let phi = 2*Math.PI;
 
-let simulation = new Simulation(n, l, m, 20, 150000);
+let simulation = new Simulation(n, l, m, radius, theta, phi, particleCount);
 let ns = [1, 2, 3, 4, 5];
 let ls = [0];
 let ms = [0];
-
-let needsUpdate = false;
 
 $(window).on("resize", () => {
   simulation.camera.aspect = $(".simulation").width() / $(".simulation").height();
@@ -32,6 +34,12 @@ Template.menu.helpers({
   },
   particleCount: function(){
     return simulation.particleCount;
+  },
+  theta: function(){
+    return simulation.theta;
+  },
+  phi: function(){
+    return simulation.phi;
   }
 })
 
@@ -97,14 +105,35 @@ Template.menu.events({
   },
   "slideStop #bounds": function(event){
     simulation.bounds = event.value;
+    simulation.removeObject("sphere");
     simulation.update();
   },
   "change #bounds": function(event){
     simulation.bounds = event.value.newValue;
+    simulation.removeObject("sphere");
+    simulation.createSphere();
     simulation.updateCoordinateSystem();
   },
   "slideStop #particleCount": function(event){
     simulation.particleCount = event.value;
+    simulation.update();
+  },
+  "change #phi": function(event){
+    simulation.phi = event.value.newValue;
+    simulation.removeObject("sphere");
+    simulation.createSphere();
+  },
+  "slideStop #phi": function(event){
+    simulation.removeObject("sphere");
+    simulation.update();
+  },
+  "change #theta": function(event){
+    simulation.theta = event.value.newValue;
+    simulation.removeObject("sphere");
+    simulation.createSphere();
+  },
+  "slideStop #theta": function(event){
+    simulation.removeObject("sphere");
     simulation.update();
   }
 })
@@ -116,10 +145,13 @@ Meteor.startup(() => {
 
   $("#bounds").slider();
   $("#particleCount").slider();
+  $("#phi").slider();
+  $("#theta").slider();
   $(".tooltip", $(".slider")).css('pointer-events','none');
 
   simulation.init();
   simulation.getWaveFunction(l, m, n);
+  simulation.drawCoordinateSystem();
   simulation.update();
   simulation.render();
 });
