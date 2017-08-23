@@ -136,6 +136,13 @@
     </div>
 
     <div class="form-group">
+      <label class="col-md-6 control-label">Particles</label>
+      <div class="col-md-5">
+        <input id="particleCount" data-slider-id='particleCountSlider' type="text" data-slider-min="10000" data-slider-max="500000" data-slider-step="10000" data-slider-value="{{particleCount}}"/>
+      </div>
+    </div>
+
+    <div class="form-group">
       <label class="col-md-6 control-label">Bounding radius</label>
       <div class="col-md-5">
         <input id="bounds" data-slider-id='boundsSlider' type="text" data-slider-min="5" data-slider-max="50" data-slider-step="1" data-slider-value="{{bounds}}"/>
@@ -143,9 +150,16 @@
     </div>
 
     <div class="form-group">
-      <label class="col-md-6 control-label">Particles</label>
+      <label class="col-md-6 control-label">Polar angle</label>
       <div class="col-md-5">
-        <input id="particleCount" data-slider-id='particleCountSlider' type="text" data-slider-min="10000" data-slider-max="500000" data-slider-step="10000" data-slider-value="{{particleCount}}"/>
+        <input id="phi" data-slider-id='phiSlider' type="text" data-slider-min="0" data-slider-max="6.28318530718" data-slider-step="0.19634954084" data-slider-value="{{phi}}"/>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-md-6 control-label">Azimuthal angle</label>
+      <div class="col-md-5">
+        <input id="theta" data-slider-id='thetaSlider' type="text" data-slider-min="0" data-slider-max="3.14159265359" data-slider-step="0.09817477042" data-slider-value="{{theta}}"/>
       </div>
     </div>
 
